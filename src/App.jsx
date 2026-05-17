@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, useContext } from 'react';
 import { LocaleContext, t } from './utils/translations';
-import { fetchMarkets as polyFetchMarkets, fetchTrades, sortMarketsByVolume } from './utils/api';
+import { fetchMarkets as polyFetchMarkets, fetchTrades, sortMarketsByVolume, getQueryForCategory } from './utils/api';
 import { SimulatorProvider } from './utils/simulator';
 import { Header, Categories, Toolbar, MarketCard, MarketSkeleton, SearchBar, FeaturedMarket, BetModal, SimulatorPage } from './components';
 import { HomePage, ProfilePage } from './pages';
@@ -48,7 +48,7 @@ function AppInner({ toggleTheme, theme }) {
     setFeaturedTrades(null);
     try {
       const params = {};
-      if (category !== 'all') params.category = category;
+      params.query = getQueryForCategory(category);
       if (nextCursor) params.cursor = nextCursor;
       if (filterStatus === 'active') params.status = 'open';
       else if (filterStatus === 'closed') params.status = 'resolved';

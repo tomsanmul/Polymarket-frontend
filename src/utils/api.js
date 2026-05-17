@@ -8,41 +8,36 @@ async function apiFetch(path, params = {}) {
 }
 
 function normalizeMarket(m) {
-  const outcomes = m.outcomes || [];
-  const outcomeNames = outcomes.map(o => o.name || o.outcomeName || '');
-  const prices = outcomes.map(o => {
-    const p = o.price ?? o.currentPrice ?? o.lastPrice ?? 0.5;
-    return String(p);
-  });
   return {
     id: m.id,
     conditionId: m.conditionId || m.id,
-    question: m.question || m.title,
-    image: m.image || m.imageUrl || m.image_url,
-    volume24hr: m.volume24h ?? m.volume_24h ?? 0,
-    volume: m.volumeTotal ?? m.volume_total ?? 0,
+    question: m.question || '',
+    image: m.image || '',
+    volume24hr: m.volume24hr ?? 0,
+    volume: m.volume ?? 0,
     liquidity: m.liquidity ?? 0,
-    endDate: m.endDate || m.trading_end_at || m.resolution_date,
-    events: m.events?.length ? m.events : [{ title: m.eventName || m.event_name || '' }],
-    status: m.status,
-    _outcomes: outcomeNames.length ? outcomeNames : ['Yes', 'No'],
-    _prices: prices.length ? prices : ['0.5', '0.5'],
-    _metadata: m.metadata || m._metadata || {},
-    _spread: m.spread ?? m._spread ?? null,
+    endDate: m.endDate || '',
+    events: m.events?.length ? m.events : [{ title: '' }],
+    status: m.status || 'unknown',
+    _outcomes: m.outcomes?.length ? m.outcomes : ['Yes', 'No'],
+    _prices: m.prices?.length ? m.prices.map(String) : ['0.5', '0.5'],
+    _metadata: m._metadata || {},
+    _spread: m._spread ?? null,
   };
 }
 
 export async function fetchMarkets(params = {}) {
-  const qParams = { limit: '50', ...params };
+  const qParams = { platform: 'polymarket', limit: '50', ...params };
   if (params.cursor) {
     qParams.cursor = params.cursor;
     delete qParams.limit;
   }
   const data = await apiFetch('/markets', qParams);
+  const items = data.value || data.markets || data || [];
   return {
-    markets: (data.markets || data || []).map(normalizeMarket),
-    cursor: data.pagination?.next_cursor || data.cursor || null,
-    hasMore: data.pagination?.has_more ?? data.hasMore ?? false,
+    markets: (Array.isArray(items) ? items : []).map(normalizeMarket),
+    cursor: data.cursor || data.pagination?.next_cursor || null,
+    hasMore: data.hasMore ?? data.pagination?.has_more ?? false,
   };
 }
 
