@@ -1,8 +1,9 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { BASE } from './api';
 
 const SimulatorContext = createContext(null);
 
-const SIM_BASE = '/api/simulator';
+const SIM_BASE = BASE + '/simulator';
 const START_BALANCE = 100000;
 
 async function simFetch(path, options = {}) {
