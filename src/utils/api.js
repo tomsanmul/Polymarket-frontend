@@ -58,7 +58,7 @@ export async function fetchTrades(marketId, params = {}) {
 export function getQueryForCategory(catId) {
   const map = {
     all: 'the',
-    sports: 'nfl',
+    sports: 'soccer',
     politics: 'election',
     crypto: 'bitcoin',
     pop: 'movie',
