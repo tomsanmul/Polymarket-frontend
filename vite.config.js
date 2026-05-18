@@ -10,6 +10,10 @@ export default defineConfig({
         target: 'http://localhost:8080',
         changeOrigin: true,
       },
+      '/ws': {
+        target: 'ws://localhost:8080',
+        ws: true,
+      },
       '/yf': {
         target: 'https://query1.finance.yahoo.com',
         changeOrigin: true,

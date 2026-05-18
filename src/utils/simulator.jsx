@@ -57,7 +57,7 @@ export function SimulatorProvider({ children }) {
 
   useEffect(() => {
     if (!state.enabled) return;
-    const interval = setInterval(fetchState, 30000);
+    const interval = setInterval(fetchState, 5000);
     return () => clearInterval(interval);
   }, [state.enabled, fetchState]);
 

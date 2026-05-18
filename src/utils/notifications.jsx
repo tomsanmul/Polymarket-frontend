@@ -1,7 +1,8 @@
 import { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
+import { BASE } from './api';
 
 const NotificationContext = createContext(null);
-const ALERTS_BASE = '/api/alerts';
+const ALERTS_BASE = BASE + '/alerts';
 
 async function alertsFetch(path, options = {}) {
   const res = await fetch(`${ALERTS_BASE}${path}`, {
@@ -71,8 +72,17 @@ export function NotificationProvider({ children, userId = 1 }) {
   }, [fetchAlerts]);
 
   useEffect(() => {
+    function getWsUrl() {
+      if (BASE.startsWith('http')) {
+        const url = new URL(BASE);
+        const protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+        return `${protocol}//${url.host}/ws/notifications?userId=${userId}`;
+      }
+      return `ws://${window.location.host}/ws/notifications?userId=${userId}`;
+    }
+
     function connect() {
-      const ws = new WebSocket(`ws://${window.location.host}/ws/notifications?userId=${userId}`);
+      const ws = new WebSocket(getWsUrl());
       wsRef.current = ws;
 
       ws.onopen = () => {
