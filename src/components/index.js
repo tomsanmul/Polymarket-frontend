@@ -18,3 +18,6 @@ export { default as ResearchPrices } from './simulator/ResearchPrices';
 
 export { default as HistoryTable } from './profile/HistoryTable';
 export { default as PnLChart } from './profile/PnLChart';
+
+export { default as ToastContainer } from './notifications/ToastContainer';
+export { default as AlertModal } from './notifications/AlertModal';

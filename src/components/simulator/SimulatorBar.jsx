@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSimulator } from '../../utils/simulator';
+import { useNotifications } from '../../utils/notifications';
 import { formatCurrency } from '../../utils/helpers';
 
 export default function SimulatorBar({ onOpen }) {
   const { enabled, balance, portfolioValue, totalPnl, positions, toggleSimulator } = useSimulator();
+  const { connected } = useNotifications();
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -28,6 +30,9 @@ export default function SimulatorBar({ onOpen }) {
 
   return (
     <div className={'sim-bar' + (open ? ' open' : '')} ref={ref}>
+      <div className="ws-indicator" title={connected ? 'Conectado' : 'Desconectado'}>
+        <span className={'ws-dot ' + (connected ? 'online' : 'offline')} />
+      </div>
       <button className="sim-toggle-btn sim-active" onClick={() => setOpen(!open)}>
         <span className="sim-porftolio-label">Portfolio</span>
         <span className={'sim-porftolio-value' + (totalPnl >= 0 ? ' up' : ' down')}>

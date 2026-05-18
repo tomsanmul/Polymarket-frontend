@@ -2,6 +2,8 @@ import { useState, useEffect, useMemo } from 'react';
 import { formatPercent } from '../../utils/helpers';
 import { fetchTrades } from '../../utils/api';
 import { useSimulator } from '../../utils/simulator';
+import { useNotifications } from '../../utils/notifications';
+import AlertModal from '../notifications/AlertModal';
 
 const RANGES = [
   { key: '30m', label: '30m', ms: 30 * 60 * 1000 },
@@ -102,6 +104,7 @@ export default function BetModal({ market, onClose, _t, lang }) {
   const [txHash, setTxHash] = useState('');
   const [trades, setTrades] = useState(null);
   const [chartLoading, setChartLoading] = useState(true);
+  const [showAlert, setShowAlert] = useState(false);
   const { enabled, addPosition } = useSimulator();
 
   useEffect(() => {
@@ -158,7 +161,12 @@ export default function BetModal({ market, onClose, _t, lang }) {
             <div className="modal-bet-form">
               <div className="modal-header">
                 <h2>{_t('modal.placeBet')}</h2>
-                <button className="modal-close" onClick={resetAndClose}>&#10005;</button>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <button className="alert-bell-btn" onClick={e => { e.stopPropagation(); setShowAlert(true); }} title="Crear alerta">
+                    &#x1F514;
+                  </button>
+                  <button className="modal-close" onClick={resetAndClose}>&#10005;</button>
+                </div>
               </div>
               <p className="modal-question">{market.question}</p>
               <div className="side-toggle">
@@ -231,6 +239,7 @@ export default function BetModal({ market, onClose, _t, lang }) {
             <button className="place-btn" onClick={resetAndClose}>{_t('modal.done')}</button>
           </>
         )}
+        {showAlert && <AlertModal market={market} onClose={() => setShowAlert(false)} />}
       </div>
     </div>
   );

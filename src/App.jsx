@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback, useMemo, useContext } from 'react';
 import { LocaleContext, t } from './utils/translations';
 import { fetchMarkets as polyFetchMarkets, fetchTrades, sortMarketsByVolume, getQueryForCategory } from './utils/api';
 import { SimulatorProvider } from './utils/simulator';
-import { Header, Categories, Toolbar, MarketCard, MarketSkeleton, SearchBar, FeaturedMarket, BetModal, SimulatorPage } from './components';
+import { NotificationProvider } from './utils/notifications';
+import { Header, Categories, Toolbar, MarketCard, MarketSkeleton, SearchBar, FeaturedMarket, BetModal, SimulatorPage, ToastContainer } from './components';
 import { HomePage, ProfilePage } from './pages';
 import './App.css';
 
@@ -148,6 +149,7 @@ function AppInner({ toggleTheme, theme }) {
 
   return (
     <SimulatorProvider>
+      <NotificationProvider>
       <div className="app">
         <Header page={page} setPage={setPage} goBack={goBack} lang={lang} setLang={setLang} _t={_t} toggleTheme={toggleTheme} theme={theme} onNavigate={setPage} onSimulatorOpen={setSimPage} />
         {page === 'home' && <HomePage markets={markets} onNavigate={setPage} onCategorySelect={handleCategorySelect} _t={_t} />}
@@ -160,6 +162,8 @@ function AppInner({ toggleTheme, theme }) {
         {betMarket && <BetModal market={betMarket} onClose={() => setBetMarket(null)} _t={_t} lang={lang} />}
         {simPage && <SimulatorPage onClose={() => setSimPage(null)} />}
       </div>
+      <ToastContainer />
+      </NotificationProvider>
     </SimulatorProvider>
   );
 }
