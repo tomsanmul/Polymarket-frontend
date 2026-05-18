@@ -33,8 +33,6 @@ jobs:
         run: npm ci
  
       - name: Build project
-        env:
-          VITE_API_URL: https://your-backend.com/api
         run: npm run build
  
       - name: Upload artifact
