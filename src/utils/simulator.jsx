@@ -29,6 +29,8 @@ export function SimulatorProvider({ children }) {
   });
 
   const fetchState = useCallback(async () => {
+    console.log('Fetching simulator state');
+
     try {
       const data = await simFetch('/state');
       setState(prev => ({
@@ -42,7 +44,11 @@ export function SimulatorProvider({ children }) {
         portfolioValue: data.portfolioValue ?? data.balance ?? START_BALANCE,
         totalPnl: data.totalPnl ?? 0,
       }));
-    } catch {}
+
+      console.log('Simulator state updated', data);
+    } catch {
+      console.log('Failed to fetch simulator state');
+    }
   }, []);
 
   useEffect(() => {
@@ -56,6 +62,7 @@ export function SimulatorProvider({ children }) {
   }, [state.enabled, fetchState]);
 
   const toggleSimulator = useCallback(async () => {
+    console.log(state.enabled ? 'Stopping' : 'Starting', 'simulator');
     try {
       if (state.enabled) {
         await simFetch('/stop', { method: 'POST' });
@@ -69,28 +76,40 @@ export function SimulatorProvider({ children }) {
           portfolioValue: START_BALANCE,
           totalPnl: 0,
         });
+        console.log('Simulator stopped');
       } else {
         await simFetch('/start', { method: 'POST' });
         await fetchState();
+        console.log('Simulator started');
       }
-    } catch {}
+    } catch {
+      console.log('Failed to toggle simulator');
+    }
   }, [state.enabled, fetchState]);
 
   const addPosition = useCallback(async ({ marketId, marketQuestion, side, amount, entryPrice, outcome }) => {
     try {
+      console.log('Adding position', { marketId, side, amount, entryPrice, outcome });
+
       await simFetch('/positions', {
         method: 'POST',
         body: JSON.stringify({ marketId, marketQuestion, side, amount, entryPrice, outcome }),
       });
       await fetchState();
-    } catch {}
+    } catch {
+      console.log('Failed to add position');
+    }
   }, [fetchState]);
 
   const closePosition = useCallback(async (positionId) => {
+    console.log('Closing position', positionId);
+
     try {
       await simFetch(`/positions/${positionId}`, { method: 'DELETE' });
       await fetchState();
-    } catch {}
+    } catch {
+      console.log('Failed to close position');
+    }
   }, [fetchState]);
 
   return (
